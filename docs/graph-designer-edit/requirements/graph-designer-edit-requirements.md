@@ -1,20 +1,21 @@
 # Graph Designer — Edit Feature: Requirements
 
 ## 1. Canvas modes
+The canvas operates in two modes: **View** and **Edit**. 
 
-**REQ-001** The canvas operates in two modes: **View** and **Edit**. Edit mode
-is entered via a **"Start Graph Modification"** button. Edit mode is exited via
-the **"Apply Changes"** button (commits staged edits) or the **"Discard"**
-button (abandons the session).
+**REQ-001** In View mode, the canvas renders use cases from last selection. 
+Incase last selection of uecases were not available, shows first usescase from the list.
+Graph visualiser and log view panels will be shown.
 
-**REQ-002** In View mode, the canvas renders already-created use cases. The
-only available operation is double-clicking a module, which opens a new tab for
-cal/tag data tuning. No structural editing operations are available in View
-mode.
+**REQ-002** In View mode, if upon clicking a module/subgraph/container or data/control link , opens properties view for the component.
 
 **REQ-003** In Edit mode, the canvas exposes: module palette, subgraph palette,
 context menus, inline connection creation, properties panel, Key Configurator
-panel, Apply Changes button, Discard button.
+panel, Apply Changes button and Discard button.
+
+**REQ-004** Edit mode is entered via a **"Start Graph Modification"** button. Edit mode is exited via
+the **"Apply Changes"** button (commits staged edits) or the **"Discard"**
+button (abandons the session).
 
 ---
 
@@ -22,12 +23,15 @@ panel, Apply Changes button, Discard button.
 
 **REQ-004** User can add a module instance by dragging from the module palette
 onto any container. Multiple instances of the same module definition are
-allowed.
+allowed with in a container.
 
 **REQ-005** When a module is added to a container that belongs to an existing
 subgraph, the backend is called immediately and the canvas is updated only
-after the backend confirms the change. The change propagates to all use cases
-that contain that subgraph when Apply Changes is run.
+after the backend confirms the change.
+If the call fails, an error toast is shown
+and no change is applied to the canvas. 
+The change propagates to all use cases
+that contain that subgraph only when Apply Changes is run.
 
 **REQ-006** User can add a module by dragging from the module palette onto
 **empty canvas space**. This atomically auto-creates a new subgraph → new
@@ -38,9 +42,10 @@ and no change is applied to the canvas.
 **REQ-007** User can add a module by dragging it inside a subgraph but
 **outside any existing container**. The tool auto-creates a new container
 within that subgraph and places the module inside it. The canvas is updated
-only after the backend confirms.
+only after the backend confirms. If the call fails, an error toast is shown
+and no change is applied to the canvas.
 
-**REQ-008** User can delete a module instance via the context menu or the
+**REQ-008** User can select and delete a module instance via the context menu or the
 **Delete key**. The canvas is updated only after the backend confirms the
 deletion. On failure, an error toast is shown.
 
@@ -54,6 +59,8 @@ rename is confirmed by the backend before the canvas reflects the change.
 **REQ-011** Dropping a module onto another module is not permitted. The tool
 must reject such a drop at the drag-and-drop level and provide a visual
 indicator that the target is invalid.
+
+OQ: What about MDF requirements? Moving module to different proc?
 
 ---
 
@@ -79,10 +86,12 @@ auto-rendered connection. Excluding a connection does not delete it from the
 backend — the connection remains in the graph. Excluded links are tracked per
 session and passed to the backend routing algorithm on Apply Changes so the
 routing engine does not use them when generating use cases.
+OQ: Once a link is exluded, what happens the subgrph that is exluded? Are we going to geay out? or delete from the screen?
 
 **REQ-015** A subgraph already on the canvas is shown as **disabled** in the
 subgraph palette with a tooltip "Already present on the canvas". Duplicate placement
 is blocked.
+OQ: Should we move the disabled subgraphs to the bottom in the subgraph list?
 
 **REQ-016a** Removing a **palette-placed** subgraph (one placed in the current
 session via the subgraph palette) from the canvas is a UI cache delete only —
